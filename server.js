@@ -17,33 +17,17 @@ const messageRoutes = require('./routes/messages');
 const app = express();
 const server = http.createServer(app);
 
-// Accept a comma-separated list of allowed origins in CLIENT_URL, e.g.:
-//   CLIENT_URL=http://localhost:5173,http://192.168.1.5:5173
-// This is what lets desktop (localhost) AND a phone on the same LAN (IP
-// address) both reach the API at the same time — a single fixed origin
-// blocks every request from the other one with a CORS error, which the
-// browser surfaces to the app as a generic "Network Error" / login failure.
-const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:5173')
-  .split(',')
-  .map((o) => o.trim())
-  .filter(Boolean);
-
+// --- CORS ---
 const corsOptions = {
-  origin(origin, callback) {
-    // Allow non-browser tools (curl/Postman) with no Origin header, and any
-    // origin explicitly listed above.
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error(`CORS blocked: ${origin} is not in CLIENT_URL`));
-    }
-  }
+  origin: true,
+  credentials: true
 };
 
 const io = new Server(server, {
   cors: {
-    origin: allowedOrigins,
-    methods: ['GET', 'POST']
+    origin: true,
+    methods: ['GET', 'POST'],
+    credentials: true
   }
 });
 
